@@ -1,22 +1,38 @@
 import f from '../src/tiny-fraction'
 
 describe('constructor', () => {
-    it('should handle errors', () => {
-        expect(() => f()).toThrow()
-        expect(() => f(null)).toThrow()
+    it('should handle falsy values', () => {
+        const falsy = { n: NaN, d: NaN, s: 1 }
+        expect(f()).toEqual(falsy)
+
+        expect(f(null)).toEqual(falsy)
+        expect(f(null, null)).toEqual(falsy)
+        expect(f(null, 1)).toEqual(falsy)
+
+        expect(f(NaN)).toEqual(falsy)
+        expect(f(NaN, NaN)).toEqual(falsy)
+        expect(f(NaN, 2)).toEqual(falsy)
+    })
+
+    it('should handle division by zero', () => {
+        expect(() => f(4, null)).toThrow()
+        expect(() => f(4, 0)).toThrow()
+    })
+
+    it('should accept second argument', () => {
+        expect(f(0, 4)).toEqual({ n: 0, d: 4, s: 1 })
+        expect(f(1, 3)).toEqual({ n: 1, d: 3, s: 1 })
+        expect(f(1.33, 2)).toEqual({ n: 1.33, d: 2, s: 1 })
+        expect(f(2, NaN)).toEqual({ n: 2, d: NaN, s: 1 })
     })
 
     it('should return fraction object', () => {
-        let val = f(2)
-        expect(val.__fraction).toBe(true)
+        expect(f(2).__fraction).toBe(true)
     })
 
     it('should clone fraction object', () => {
-        let a = f(2),
-            b = f(a)
-        a.add(1)
-        expect(a.valueOf()).toBe(3)
-        expect(b.valueOf()).toBe(2)
+        let val = f(2)
+        expect(val).not.toBe(f(val))
     })
 })
 
@@ -58,11 +74,12 @@ describe('.valueOf', () => {
 })
 
 describe('.add', () => {
-    it('should return same fraction object', () => {
+    it('should return new fraction object', () => {
         let a = f(0.25),
             b = a.add(0.33)
-        expect(a).toBe(b)
-        expect(a.valueOf()).toBe(0.58)
+        expect(a).not.toBe(b)
+        expect(a.valueOf()).toBe(0.25)
+        expect(b.valueOf()).toBe(0.58)
     })
 
     it('should accept number or another fraction object', () => {
@@ -70,12 +87,6 @@ describe('.add', () => {
             object = f(0.44).add(f(0.2))
         expect(number.valueOf()).toBe(0.64)
         expect(object.valueOf()).toBe(0.64)
-    })
-
-    it('should modify fraction', () => {
-        let val = f(0.15)
-        val.add(0.05)
-        expect(val.valueOf()).toBe(0.2)
     })
 
     it('should be chainable', () => {
@@ -95,15 +106,13 @@ describe('.add', () => {
     })
 
     it('should handle small numbers', () => {
-        let val = f(0.0000033)
-        val.add(0.0000112)
+        let val = f(0.0000033).add(0.0000112)
         expect(val.valueOf()).toBe(0.0000145)
     })
 
     it('should handle big numbers', () => {
-        let val = f(4335.33)
-        val.add(3460.012)
-        expect(val.valueOf()).toBe(7795.342)
+        let val = f(43345.33).add(34460.012)
+        expect(val.valueOf()).toBe(77805.342)
     })
 
     it('should handle binary floating point numbers', () => {
@@ -147,11 +156,12 @@ describe('.add', () => {
 })
 
 describe('.subtract', () => {
-    it('should return same fraction object', () => {
+    it('should return new fraction object', () => {
         let a = f(0.25),
             b = a.subtract(0.33)
-        expect(a).toBe(b)
-        expect(a.valueOf()).toBe(-0.08)
+        expect(a).not.toBe(b)
+        expect(a.valueOf()).toBe(0.25)
+        expect(b.valueOf()).toBe(-0.08)
     })
 
     it('should accept number or another fraction object', () => {
@@ -159,12 +169,6 @@ describe('.subtract', () => {
             object = f(0.66).subtract(f(0.22))
         expect(number.valueOf()).toBe(0.44)
         expect(object.valueOf()).toBe(0.44)
-    })
-
-    it('should modify fraction', () => {
-        let val = f(0.15)
-        val.subtract(0.05)
-        expect(val.valueOf()).toBe(0.1)
     })
 
     it('should be chainable', () => {
@@ -184,14 +188,12 @@ describe('.subtract', () => {
     })
 
     it('should handle small numbers', () => {
-        let val = f(0.0000033)
-        val.subtract(0.0000112)
+        let val = f(0.0000033).subtract(0.0000112)
         expect(val.valueOf()).toBe(-0.0000079)
     })
 
     it('should handle big numbers', () => {
-        let val = f(4335.33)
-        val.subtract(3460.012)
+        let val = f(4335.33).subtract(3460.012)
         expect(val.valueOf()).toBe(875.318)
     })
 
@@ -216,11 +218,12 @@ describe('.subtract', () => {
 })
 
 describe('.multiply', () => {
-    it('should return same fraction object', () => {
+    it('should return new fraction object', () => {
         let a = f(0.25),
             b = a.multiply(0.33)
-        expect(a).toBe(b)
-        expect(a.valueOf()).toBe(0.0825)
+        expect(a).not.toBe(b)
+        expect(a.valueOf()).toBe(0.25)
+        expect(b.valueOf()).toBe(0.0825)
     })
 
     it('should accept number or another fraction object', () => {
@@ -228,12 +231,6 @@ describe('.multiply', () => {
             object = f(0.66).multiply(f(0.22))
         expect(number.valueOf()).toBe(0.1452)
         expect(object.valueOf()).toBe(0.1452)
-    })
-
-    it('should modify fraction', () => {
-        let val = f(0.15)
-        val.multiply(0.05)
-        expect(val.valueOf()).toBe(0.0075)
     })
 
     it('should be chainable', () => {
@@ -251,14 +248,12 @@ describe('.multiply', () => {
     })
 
     it('should handle small numbers', () => {
-        let val = f(0.0000033)
-        val.multiply(0.0000112)
+        let val = f(0.0000033).multiply(0.0000112)
         expect(val.valueOf()).toBe(0.00000000003696)
     })
 
     it('should handle big numbers', () => {
-        let val = f(4335.33)
-        val.multiply(3460.012)
+        let val = f(4335.33).multiply(3460.012)
         expect(val.valueOf()).toBe(15000293.82396)
     })
 
@@ -283,11 +278,12 @@ describe('.multiply', () => {
 })
 
 describe('.divide', () => {
-    it('should return same fraction object', () => {
+    it('should return new fraction object', () => {
         let a = f(0.66),
             b = a.divide(0.2)
-        expect(a).toBe(b)
-        expect(a.valueOf()).toBe(3.3)
+        expect(a).not.toBe(b)
+        expect(a.valueOf()).toBe(0.66)
+        expect(b.valueOf()).toBe(3.3)
     })
 
     it('should accept number or another fraction object', () => {
@@ -295,12 +291,6 @@ describe('.divide', () => {
             object = f(0.66).divide(f(0.22))
         expect(number.valueOf()).toBe(3)
         expect(object.valueOf()).toBe(3)
-    })
-
-    it('should modify fraction', () => {
-        let val = f(0.15)
-        val.divide(0.05)
-        expect(val.valueOf()).toBe(3)
     })
 
     it('should be chainable', () => {
@@ -318,14 +308,12 @@ describe('.divide', () => {
     })
 
     it('should handle small numbers', () => {
-        let val = f(0.0000033)
-        val.divide(0.0000112)
+        let val = f(0.0000033).divide(0.0000112)
         expect(val.valueOf()).toBe(0.29464285714285715)
     })
 
     it('should handle big numbers', () => {
-        let val = f(4335.33)
-        val.divide(3460.012)
+        let val = f(4335.33).divide(3460.012)
         expect(val.valueOf()).toBe(1.2529812035333983)
     })
 
@@ -344,13 +332,12 @@ describe('.divide', () => {
     })
 
     it('should handle zero', () => {
-        let a = f(0.33).divide(0),
-            b = f(0).divide(0.33)
-        expect(a.valueOf()).toBe(0.33)
-        expect(b.valueOf()).toBe(0)
+        let val = f(0).divide(0.33)
+        expect(val.valueOf()).toBe(0)
+        expect(() => f(0.33).divide(0)).toThrow()
     })
 
-    it('should handle a recurring decimal', () => {
+    it('should handle a repeating decimal places', () => {
         let a = f(1).divide(3),
             b = f(7).divide(3),
             c = f(5).divide(6),
@@ -361,5 +348,12 @@ describe('.divide', () => {
         expect(c.valueOf()).toBe(0.8333333333333334)
         expect(d.valueOf()).toBe(2.5833333333333335)
         expect(e.valueOf()).toBe(0.2857142857142857)
+    })
+
+    it('complex calculation', () => {
+        let val = f(1)
+            .divide(98)
+            .multiply(98)
+        expect(val.valueOf()).toBe(1)
     })
 })
