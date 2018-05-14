@@ -1,0 +1,28 @@
+{
+  "name": "tiny-fraction",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/tiny-fraction.js",
+  "scripts": {
+    "build": "rollup --config",
+    "test": "jest",
+    "test-watch": "npm test -- --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bartoszlorek/tiny-fraction.git"
+  },
+  "author": "Bartosz Lorek",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bartoszlorek/tiny-fraction/issues"
+  },
+  "homepage": "https://github.com/bartoszlorek/tiny-fraction#readme",
+  "devDependencies": {
+    "babel-preset-env": "^1.7.0",
+    "jest-cli": "^22.4.3",
+    "rollup": "^0.58.2",
+    "rollup-plugin-babel": "^3.0.4",
+    "rollup-plugin-uglify": "^3.0.0"
+  }
+}
